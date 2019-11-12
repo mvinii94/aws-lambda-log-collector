@@ -1,7 +1,7 @@
 import click
 
 # Local imports
-from __init__ import *
+from .__init__ import *
 from .utils import parse_time, create_dir, write_file, get_profiles, WRONG_PROFILE
 from .lambda_log_collector import LambdaLogCollector
 
