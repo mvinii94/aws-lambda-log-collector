@@ -31,7 +31,7 @@ class LambdaLogCollector:
             response = self.lambda_client.get_function_configuration(
                 FunctionName=self.function_name
             )
-            # logging.debug(json.dumps(response))
+            logging.debug(json.dumps(response))
             del response["ResponseMetadata"]
             return json.dumps(response, indent=4)
         except ClientError as e:
@@ -57,7 +57,7 @@ class LambdaLogCollector:
             self.filtered_streams = list(
                 map(lambda stream: stream.get("logStreamName"), filtered_streams)
             )
-
+            logging.info("Found %s log streams matching the criteria." % len(self.filtered_streams))
             logging.debug(self.filtered_streams)
             return json.dumps(self.filtered_streams, indent=4)
         except ClientError as e:
@@ -81,14 +81,14 @@ class LambdaLogCollector:
             try:
                 for page in page_iterator:
                     self.all_logs += page.get("events")
-
-                    logging.debug(self.all_logs)
-                    return json.dumps(self.all_logs, indent=4)
+                logging.info("Found %s logs matching the %s pattern" % (len(self.all_logs), self.pattern))
+                logging.debug(self.all_logs)
+                return json.dumps(self.all_logs, indent=4)
             except ClientError as e:
                 logging.error(e.response['Error']['Message'])
                 return False
         else:
-            logging.info("No CloudWatch Log stream match the criteria.")
+            logging.info("No log matching the %s pattern." % self.pattern)
             return False
 
 

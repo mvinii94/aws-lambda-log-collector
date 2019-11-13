@@ -7,7 +7,7 @@ Imagine your Lambda Function had an invocation error spike during last night. To
 need to troubleshoot that error spike. You usually need to open CloudWatch Logs console and start to scroll infinitely
 through the Log Streams, even worse if the Lambda Function has millions of invocations daily.
 
-This CLI will help you to gather all the useful CloudWatch Logs that faulty Lambda Function, with a single command while
+This CLI will help you to gather all the useful CloudWatch Logs from a Lambda Function, with a single command while
 you can go for your morning coffee.
 
 **Why?**
