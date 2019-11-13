@@ -62,12 +62,27 @@ The AWS Region where you Lambda Function belongs to.
 #### --profile || -p
 A configured aws [profile](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html).
 
+### Installation
+
+#### From pip
+
+```bash
+pip install aws-lambda-log-collector
+```
+
+#### From source
+
+```bash
+git clone https://github.com/mvinii94/aws-lambda-log-collector && cd aws-lambda-log-collector
+
+pip install -e .
+```
+
 ### Sample
 
 ```bash
 aws-lambda-log-collector --function-name MyFunction \
 --start-time 2019-11-10T23:30:00 --end-time 2019-11-11T03:30:00 \
 --pattern "ERROR" --output /tmp/ --region eu-west-1 --profile dev
-
 ```
 
