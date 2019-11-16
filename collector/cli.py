@@ -1,4 +1,5 @@
 import click
+from pathlib import Path
 
 # Local imports
 from .__init__ import *
@@ -41,19 +42,21 @@ def cli(function_name, profile, region, output, start_time, end_time, pattern, l
         logs = lambda_log_collector.collect_logs()
 
         # create output dir
-        new_dir_name = output + "/" + function_name + "-" + start_time + "-" + end_time
-        create_dir(new_dir_name)
+        current_dir = Path(output)
+        new_dir_name = function_name + "-" + start_time + "-" + end_time
+        new_dir = Path(current_dir / new_dir_name)
+        create_dir(new_dir)
 
         # write lambda config file
-        lambda_fn_config_file_path = new_dir_name + "/" + function_name + "-config.json"
-        write_file(lambda_fn_config_file_path, lambda_configuration)
+        lambda_fn_config_file = function_name + "-config.json"
+        write_file(new_dir, lambda_fn_config_file, lambda_configuration)
 
         # write streams file
         if streams is not False:
-            lambda_fn_streams_file_path = new_dir_name + "/" + function_name + "-streams-" + start_time + "-" + end_time + ".json"
-            write_file(lambda_fn_streams_file_path, streams)
+            lambda_fn_streams_file = function_name + "-streams-" + start_time + "-" + end_time + ".json"
+            write_file(new_dir, lambda_fn_streams_file, streams)
 
         # write logs file
         if logs is not False:
-            lambda_fn_logs_file_path = new_dir_name + "/" + function_name + "-logs-" + start_time + "-" + end_time + ".json"
-            write_file(lambda_fn_logs_file_path, logs)
+            lambda_fn_logs_file = function_name + "-logs-" + start_time + "-" + end_time + ".json"
+            write_file(new_dir, lambda_fn_logs_file, logs)

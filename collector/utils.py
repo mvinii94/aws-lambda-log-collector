@@ -1,6 +1,7 @@
 import os
 import logging
 import botocore.session
+from pathlib import Path
 from time import mktime, strptime
 
 LOG_GROUP_PREFIX = "/aws/lambda/"
@@ -31,14 +32,16 @@ def parse_time(date):
 def create_dir(path):
     logging.info("Output path: %s" % path)
     try:
-        os.makedirs(path)
+        dir_location = Path(path)
+        os.makedirs(dir_location)
     except OSError:
         if not os.path.isdir(path):
             raise
 
 
-def write_file(file_name, content):
+def write_file(path, file_name, content):
     logging.info("Saving file %s..." % file_name)
+    file_name = Path(path / file_name)
     file = open(file_name, 'w')
     try:
         file.write(content)
