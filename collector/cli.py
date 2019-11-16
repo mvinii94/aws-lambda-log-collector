@@ -41,6 +41,10 @@ def cli(function_name, profile, region, output, start_time, end_time, pattern, l
         # collect logs from filtered log streams
         logs = lambda_log_collector.collect_logs()
 
+        # replacing timestamp strings : to _ (windows support)
+        start_time = start_time.replace(":", "_")
+        end_time = end_time.replace(":", "_")
+
         # create output dir
         current_dir = Path(output)
         new_dir_name = function_name + "-" + start_time + "-" + end_time
