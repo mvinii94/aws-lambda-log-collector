@@ -1,8 +1,7 @@
 import os
 import logging
 import botocore.session
-from datetime import datetime
-
+from time import mktime, strptime
 
 LOG_GROUP_PREFIX = "/aws/lambda/"
 WRONG_PROFILE = "[Error] - The provided profile is not configured. The configured profiles are: %s"
@@ -25,7 +24,7 @@ def get_profiles():
 
 
 def parse_time(date):
-    date = int(datetime.strptime(date, '%Y-%m-%dT%H:%M:%S').strftime('%s')) * 1000
+    date = int(mktime(strptime(date, '%Y-%m-%dT%H:%M:%S'))) * 1000
     return date
 
 
@@ -46,3 +45,7 @@ def write_file(file_name, content):
     finally:
         file.close()
 
+
+def split_list(l, n):
+    for item in range(0, len(l), n):
+        yield l[item:item + n]

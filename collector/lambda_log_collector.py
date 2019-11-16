@@ -4,11 +4,11 @@ import logging
 from botocore.exceptions import ClientError
 
 # Local imports
-from .utils import GET_LAMBDA_FUNCTION_CONFIG, GET_CWL_STREAMS, GET_CWL_LOGS, LOG_GROUP_PREFIX
+from .utils import split_list, GET_LAMBDA_FUNCTION_CONFIG, GET_CWL_STREAMS, GET_CWL_LOGS, LOG_GROUP_PREFIX
 
 
 class LambdaLogCollector:
-    def __init__(self, region, profile, function_name, start_time, end_time, pattern):
+    def __init__(self, region: str, profile: str, function_name: str, start_time: int, end_time: int, pattern: str):
         self.region = region
         self.profile = profile
         self.function_name = function_name
@@ -68,25 +68,50 @@ class LambdaLogCollector:
     def collect_logs(self):
         logging.info(GET_CWL_LOGS)
         paginator = self.logs_client.get_paginator("filter_log_events")
-        if len(self.filtered_streams) > 0:
-            page_iterator = paginator.paginate(
-                logGroupName=self.log_group_name,
-                logStreamNames=self.filtered_streams,
-                startTime=self.start_time,
-                endTime=self.end_time,
-                filterPattern=self.pattern,
-                limit=1500
-            )
 
-            try:
-                for page in page_iterator:
-                    self.all_logs += page.get("events")
-                logging.info("Found %s logs matching the %s pattern" % (len(self.all_logs), self.pattern))
-                logging.debug(self.all_logs)
-                return json.dumps(self.all_logs, indent=4)
-            except ClientError as e:
-                logging.error(e.response['Error']['Message'])
-                return False
+        number_of_streams = len(self.filtered_streams)
+
+        if number_of_streams > 0:
+
+            if number_of_streams <= 100:
+                page_iterator = paginator.paginate(
+                    logGroupName=self.log_group_name,
+                    logStreamNames=self.filtered_streams,
+                    startTime=self.start_time,
+                    endTime=self.end_time,
+                    filterPattern=self.pattern,
+                    limit=1500
+                )
+                try:
+                    for page in page_iterator:
+                        self.all_logs += page.get("events")
+                except ClientError as e:
+                    logging.error(e.response['Error']['Message'])
+                    return False
+
+            elif number_of_streams > 100:
+                logging.info("More than 100 log streams found, filtering logs in chunks...")
+                chunks = list(split_list(self.filtered_streams, 100))
+                for chunk in chunks:
+                    page_iterator = paginator.paginate(
+                        logGroupName=self.log_group_name,
+                        logStreamNames=chunk,
+                        startTime=self.start_time,
+                        endTime=self.end_time,
+                        filterPattern=self.pattern,
+                        limit=1500
+                    )
+                    try:
+                        for page in page_iterator:
+                            self.all_logs += page.get("events")
+                    except ClientError as e:
+                        logging.error(e.response['Error']['Message'])
+                        return False
+
+            logging.info("Found %s logs matching the %s pattern" % (len(self.all_logs), self.pattern))
+            logging.debug(self.all_logs)
+            return json.dumps(self.all_logs, indent=4)
+
         else:
             logging.info("No log matching the %s pattern." % self.pattern)
             return False
