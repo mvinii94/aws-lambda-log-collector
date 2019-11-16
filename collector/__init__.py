@@ -17,7 +17,7 @@ def define_log_level(level):
 
 __pkg_name__ = "aws-lambda-log-collector"
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 
 __description__ = "A handy CLI to help you gather Lambda Functions logs"
 
