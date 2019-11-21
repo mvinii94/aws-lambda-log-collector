@@ -3,7 +3,7 @@ from pathlib import Path
 
 # Local imports
 from .__init__ import *
-from .utils import parse_time, create_dir, write_file, get_profiles, WRONG_PROFILE
+from .utils import parse_time, create_dir, write_file, get_profiles, WRONG_PROFILE, compress
 from .lambda_log_collector import LambdaLogCollector
 
 
@@ -46,9 +46,9 @@ def cli(function_name, profile, region, output, start_time, end_time, pattern, l
         end_time = end_time.replace(":", "_")
 
         # create output dir
-        current_dir = Path(output)
+        output_path = Path(output)
         new_dir_name = function_name + "-" + start_time + "-" + end_time
-        new_dir = Path(current_dir / new_dir_name)
+        new_dir = Path(output_path / new_dir_name)
         create_dir(new_dir)
 
         # write lambda config file
@@ -64,3 +64,5 @@ def cli(function_name, profile, region, output, start_time, end_time, pattern, l
         if logs is not False:
             lambda_fn_logs_file = function_name + "-logs-" + start_time + "-" + end_time + ".json"
             write_file(new_dir, lambda_fn_logs_file, logs)
+
+        compress(new_dir, new_dir_name)
