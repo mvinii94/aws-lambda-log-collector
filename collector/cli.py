@@ -3,7 +3,7 @@ from pathlib import Path
 
 # Local imports
 from .__init__ import *
-from .utils import parse_time, create_dir, write_file, get_profiles, WRONG_PROFILE, compress
+from .utils import parse_time, create_dir, write_file, get_profiles, compress, INVALID_PROFILE, INVALID_DATES
 from .lambda_log_collector import LambdaLogCollector
 
 
@@ -25,8 +25,13 @@ def cli(function_name, profile, region, output, start_time, end_time, pattern, l
     epoch_start_time = parse_time(start_time)
     epoch_end_time = parse_time(end_time)
 
-    if profile not in get_profiles():
-        raise Exception(WRONG_PROFILE % get_profiles)
+    if  epoch_start_time < epoch_end_time:
+        raise Exception(INVALID_DATES)
+
+    available_profiles = get_profiles()
+
+    if profile not in available_profiles:
+        raise Exception(INVALID_PROFILE % available_profiles)
 
     # initiate LambdaLogCollector class
     lambda_log_collector = LambdaLogCollector(region, profile, function_name, epoch_start_time, epoch_end_time, pattern)

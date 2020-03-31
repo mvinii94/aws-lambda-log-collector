@@ -26,9 +26,9 @@ class LambdaLogCollector:
         self.start_time = start_time
         self.end_time = end_time
         self.pattern = pattern
-        self.session = boto3.Session(profile_name=profile, region_name=region)
-        self.lambda_client = boto3.client("lambda")
-        self.logs_client = boto3.client("logs")
+        self.session = boto3.Session(profile_name=profile)
+        self.lambda_client = boto3.client("lambda", region_name=region)
+        self.logs_client = boto3.client("logs", region_name=region)
         self.all_streams = []
         self.filtered_streams = []
         self.all_logs = []

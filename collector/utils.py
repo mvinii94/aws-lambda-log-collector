@@ -8,7 +8,6 @@ from time import mktime, strptime
 from botocore.exceptions import ClientError
 
 LOG_GROUP_PREFIX = "/aws/lambda/"
-WRONG_PROFILE = "[Error] - The provided profile is not configured. The configured profiles are: %s"
 GET_LAMBDA_FUNCTION_CONFIG = "Trying to get Lambda Function configuration..."
 GET_CWL_STREAMS = "Trying to get CloudWatch Logs Streams..."
 GET_CWL_LOGS = "Trying to collect logs from CloudWatch Logs..."
@@ -16,6 +15,8 @@ DESCRIPTION = """
                 AWS Lambda Log Collector - 
                 Easily gather and filter Lambda Function Logs stored in CloudWatch Logs
               """
+INVALID_PROFILE = "[Error] - The provided profile is not configured. The configured profiles are: %s"
+INVALID_DATES = "[Error] - Start timestamp must be before End timestamp"
 
 
 def get_profiles():
