@@ -4,7 +4,7 @@
 source ./venv/bin/activate
 
 # build
-python -m pip install --upgrade setuptools wheel
+python -m pip install --upgrade setuptools wheel twine
 python setup.py sdist bdist_wheel
 
 # upload
