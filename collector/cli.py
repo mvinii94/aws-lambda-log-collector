@@ -25,7 +25,7 @@ def cli(function_name, profile, region, output, start_time, end_time, pattern, l
     epoch_start_time = parse_time(start_time)
     epoch_end_time = parse_time(end_time)
 
-    if  epoch_start_time < epoch_end_time:
+    if  epoch_start_time > epoch_end_time:
         raise Exception(INVALID_DATES)
 
     available_profiles = get_profiles()
